@@ -1,21 +1,8 @@
-// 1. Fetch categories
-// 2. Visualzie all categories
+import fetchData, { apiBaseUrl, categoriesEndpoint } from "./fetchData.js";
+
 const categoriesFilterDiv = document.getElementById(
   "detailed-categories-filter"
 );
-
-const apiBaseUrl = "https://www.themealdb.com/api/json/v1/1";
-const categoriesEndpoint = "/categories.php";
-
-async function fetchData(url) {
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
-  } catch (err) {
-    console.log(err);
-  }
-}
 
 function createCategoryElement(categoryObj) {
   const { strCategory, strCategoryThumb } = categoryObj;
