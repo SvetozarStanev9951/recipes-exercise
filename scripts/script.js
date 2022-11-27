@@ -5,16 +5,20 @@ const categoriesFilterDiv = document.getElementById(
 );
 
 function createCategoryElement(categoryObj) {
-  const { strCategory, strCategoryThumb } = categoryObj;
+  const { strCategory: title, strCategoryThumb: imgSrc } = categoryObj;
 
   const categoryDiv = document.createElement("div");
   categoryDiv.className = "category-box";
 
   const categoryThumb = document.createElement("img");
-  categoryThumb.setAttribute("src", strCategoryThumb);
-  categoryThumb.setAttribute("alt", `${strCategory} category image`);
+  categoryThumb.setAttribute("src", imgSrc);
+  categoryThumb.setAttribute("alt", `${title} category image`);
+
+  const categoryTitle = document.createElement("h4");
+  categoryTitle.textContent = title;
 
   categoryDiv.appendChild(categoryThumb);
+  categoryDiv.appendChild(categoryTitle);
   return categoryDiv;
 }
 

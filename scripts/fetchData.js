@@ -11,5 +11,5 @@ async function fetchData(url) {
   }
 }
 
-export { apiBaseUrl, categoriesEndpoint, fetchData };
+export { apiBaseUrl, categoriesEndpoint };
 export default fetchData;
