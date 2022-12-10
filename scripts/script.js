@@ -39,6 +39,16 @@ async function showMealsByCategory(category) {
   meals.forEach((recipe) => {
     createMealPreviewElement(recipe);
   });
+
+  // if (window.innerHeight < window.innerWidth) {
+  //   window.scrollTo({ top: 0 });
+  // } else {
+  //   window.scrollTo(0, resultsContainer.offsetTop);
+  // }
+  // window.scrollTo(0, resultsContainer.offsetTop);
+  window.scrollTo({
+    top: resultsContainer.offsetTop,
+  });
 }
 
 function createCategoryElement(categoryObj) {
@@ -80,10 +90,11 @@ async function main() {
 
 main();
 
-// 1. Add title for each recipe
+// [DONE] 1. Add title for each recipe
 // 2. Build recipes view and fetch data for each recipe
 // 3. Handle search
 // 4. Reset initial view when logo is clicked
 // 5. Recipe of the day
 // 6. Filter by country
 // [DONE] 7. Cache data (local storage)
+// [DONE] 8. Scroll to result container
