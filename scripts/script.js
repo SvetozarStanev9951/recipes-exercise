@@ -9,6 +9,7 @@ import {
   readFromStorage,
   writeToStorage,
   storageKeys,
+  storageType,
 } from "./storageControl.js";
 
 const mealsApi = new MealsAPI();
@@ -158,15 +159,40 @@ async function main() {
     categoriesFilterDiv.appendChild(newCategoryEl);
   });
 
-  const {
-    meals: [recipeOfTheDay],
-  } = await mealsApi.get(mealsApi.endpoints.recipeOfTheDay);
-  console.log(recipeOfTheDay);
+  const currentDate = new Date();
+  const dateKey = `${currentDate.getDate()}-${
+    currentDate.getMonth() + 1
+  }-${currentDate.getFullYear()}`;
+
+  let recipeOfTheDay = null;
+
+  recipeOfTheDay = readFromStorage(dateKey);
+
+  if (!recipeOfTheDay) {
+    const {
+      meals: [newRecipeOfTheDay],
+    } = await mealsApi.get(mealsApi.endpoints.recipeOfTheDay);
+    recipeOfTheDay = newRecipeOfTheDay;
+
+    const dateRgx = new RegExp(/^[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}$/, "gm");
+
+    for (let i = 0; i < window[storageType].length; i++) {
+      const storageKey = window[storageType].key(i);
+      if (dateRgx.test(storageKey)) {
+        window[storageType].removeItem(storageKey);
+        i--;
+      }
+    }
+
+    writeToStorage(dateKey, newRecipeOfTheDay);
+  }
+
+  buildMealView(recipeOfTheDay);
   // Handle recipe of the day
   // 0. Check if recipe of the day exists in storage
   // [DONE] 1. Fetch random meal
   // 2. Save random meal in storage with key current day
-  // 3. Build recipe view with the random meal
+  // [DONE] 3. Build recipe view with the random meal
 }
 
 main();

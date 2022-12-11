@@ -11,4 +11,4 @@ function readFromStorage(key) {
 function writeToStorage(key, value) {
   window[storageType].setItem(key, JSON.stringify(value));
 }
-export { readFromStorage, writeToStorage, storageKeys };
+export { readFromStorage, writeToStorage, storageKeys, storageType };
