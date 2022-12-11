@@ -1,14 +1,17 @@
-import fetchData, {
-  apiBaseUrl,
-  categoriesEndpoint,
-  fetchMealsByCategory,
-  fetchMealById,
-} from "./fetchData.js";
+// import fetchData, {
+//   apiBaseUrl,
+//   categoriesEndpoint,
+//   fetchMealsByCategory,
+//   fetchMealById,
+// } from "./fetchData.js";
+import MealsAPI from "./MealsAPI.js";
 import {
   readFromStorage,
   writeToStorage,
   storageKeys,
 } from "./storageControl.js";
+
+const mealsApi = new MealsAPI();
 
 const categoriesFilterDiv = document.getElementById(
   "detailed-categories-filter"
@@ -17,9 +20,12 @@ const resultsContainer = document.getElementById("results-contaienr");
 
 async function visualizeMealById(event) {
   const id = event.currentTarget.id;
+  // const {
+  //   meals: [recipe],
+  // } = await fetchMealById(id);
   const {
     meals: [recipe],
-  } = await fetchMealById(id);
+  } = await mealsApi.get(mealsApi.endpoints.lookup, "i=" + id);
 
   const {
     strMeal,
@@ -30,9 +36,7 @@ async function visualizeMealById(event) {
     strSource,
   } = recipe;
 
-  console.log(recipe);
-
-  // resultsContainer.innerHTML = "";
+  resultsContainer.innerHTML = "";
 
   const htmlString = `
   <div>
@@ -75,7 +79,7 @@ function createMealPreviewElement(meal) {
   recipeDiv.addEventListener("click", visualizeMealById);
 
   const recipeImg = document.createElement("img");
-  recipeImg.setAttribute("src", strMealThumb);
+  recipeImg.setAttribute("src", strMealThumb + "/preview");
 
   const recipeTitle = document.createElement("h4");
   recipeTitle.textContent = strMeal;
@@ -86,7 +90,11 @@ function createMealPreviewElement(meal) {
 }
 
 async function showMealsByCategory(category) {
-  const { meals } = await fetchMealsByCategory(category);
+  // const { meals } = await fetchMealsByCategory(category);
+  const { meals } = await mealsApi.get(
+    mealsApi.endpoints.filter,
+    "c=" + category
+  );
 
   resultsContainer.innerHTML = "";
 
@@ -129,8 +137,11 @@ async function main() {
   categories = readFromStorage(storageKeys.categories);
 
   if (!categories) {
-    const { categories: remoteCategories } = await fetchData(
-      apiBaseUrl + categoriesEndpoint
+    // const { categories: remoteCategories } = await fetchData(
+    //   apiBaseUrl + categoriesEndpoint
+    // );
+    const { categories: remoteCategories } = await mealsApi.get(
+      mealsApi.endpoints.categories
     );
     categories = remoteCategories;
     writeToStorage(storageKeys.categories, categories);
