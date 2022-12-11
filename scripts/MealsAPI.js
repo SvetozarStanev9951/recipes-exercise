@@ -4,8 +4,9 @@ class MealsAPI {
     categories: "/categories.php",
     filter: "/filter.php",
     lookup: "/lookup.php",
+    recipeOfTheDay: "/random.php",
   };
-  maxCacheSize = 3;
+  maxCacheSize = 20;
 
   static cache = new Map();
 
@@ -30,6 +31,7 @@ class MealsAPI {
 
   async get(endpoint, ...queryParams) {
     const queryString = queryParams.length > 0 ? queryParams.join("&") : "";
+
     const url =
       this.#baseUrl + endpoint + (queryString ? "?" + queryString : "");
 
@@ -42,7 +44,6 @@ class MealsAPI {
       .then((result) => {
         this.#optimizeCache();
         MealsAPI.cache.set(url, result);
-
         return result;
       })
       .catch((err) => {

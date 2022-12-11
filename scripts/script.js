@@ -17,16 +17,9 @@ const categoriesFilterDiv = document.getElementById(
   "detailed-categories-filter"
 );
 const resultsContainer = document.getElementById("results-contaienr");
+const appLogo = document.getElementById("my-app-logo");
 
-async function visualizeMealById(event) {
-  const id = event.currentTarget.id;
-  // const {
-  //   meals: [recipe],
-  // } = await fetchMealById(id);
-  const {
-    meals: [recipe],
-  } = await mealsApi.get(mealsApi.endpoints.lookup, "i=" + id);
-
+function buildMealView(meal) {
   const {
     strMeal,
     strMealThumb,
@@ -34,7 +27,7 @@ async function visualizeMealById(event) {
     strArea,
     strInstructions,
     strSource,
-  } = recipe;
+  } = meal;
 
   resultsContainer.innerHTML = "";
 
@@ -67,8 +60,18 @@ async function visualizeMealById(event) {
   `;
 
   resultsContainer.insertAdjacentHTML("afterbegin", htmlString);
-  // create recipe view
-  // append recipe view to results container
+}
+
+async function visualizeMealById(event) {
+  const id = event.currentTarget.id;
+  // const {
+  //   meals: [recipe],
+  // } = await fetchMealById(id);
+  const {
+    meals: [recipe],
+  } = await mealsApi.get(mealsApi.endpoints.lookup, "i=" + id);
+
+  buildMealView(recipe);
 }
 
 function createMealPreviewElement(meal) {
@@ -133,6 +136,9 @@ function createCategoryElement(categoryObj) {
 }
 
 async function main() {
+  categoriesFilterDiv.innerHTML = "";
+  resultsContainer.innerHTML = "";
+
   let categories = [];
   categories = readFromStorage(storageKeys.categories);
 
@@ -151,14 +157,25 @@ async function main() {
     const newCategoryEl = createCategoryElement(el);
     categoriesFilterDiv.appendChild(newCategoryEl);
   });
+
+  const {
+    meals: [recipeOfTheDay],
+  } = await mealsApi.get(mealsApi.endpoints.recipeOfTheDay);
+  console.log(recipeOfTheDay);
+  // Handle recipe of the day
+  // 0. Check if recipe of the day exists in storage
+  // [DONE] 1. Fetch random meal
+  // 2. Save random meal in storage with key current day
+  // 3. Build recipe view with the random meal
 }
 
 main();
 
+appLogo.addEventListener("click", main);
 // [DONE] 1. Add title for each recipe
-// 2. Build recipes view and fetch data for each recipe
+// [DONE] 2. Build recipes view and fetch data for each recipe
 // 3. Handle search
-// 4. Reset initial view when logo is clicked
+// [DONE] 4. Reset initial view when logo is clicked
 // 5. Recipe of the day
 // 6. Filter by country
 // [DONE] 7. Cache data (local storage)
