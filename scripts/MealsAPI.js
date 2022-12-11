@@ -7,8 +7,7 @@ class MealsAPI {
     recipeOfTheDay: "/random.php",
   };
   maxCacheSize = 20;
-
-  static cache = new Map();
+  cache = new Map();
 
   constructor(apiBaseUrl, endpoints) {
     if (apiBaseUrl) this.#baseUrl = apiBaseUrl;
@@ -20,13 +19,13 @@ class MealsAPI {
   }
 
   #optimizeCache() {
-    if (MealsAPI.cache.size < this.maxCacheSize) return;
+    if (this.cache.size < this.maxCacheSize) return;
 
     // const arr = Array.from(MealsAPI.cache);
     // arr.shift();
 
     // MealsAPI.cache = new Map(arr);
-    MealsAPI.cache.delete(Array.from(MealsAPI.cache)[0][0]);
+    this.cache.delete(Array.from(this.cache)[0][0]);
   }
 
   async get(endpoint, ...queryParams) {
@@ -35,15 +34,15 @@ class MealsAPI {
     const url =
       this.#baseUrl + endpoint + (queryString ? "?" + queryString : "");
 
-    if (MealsAPI.cache.has(url)) {
-      return MealsAPI.cache.get(url);
+    if (this.cache.has(url)) {
+      return this.cache.get(url);
     }
 
     return fetch(url)
       .then((response) => response.json())
       .then((result) => {
         this.#optimizeCache();
-        MealsAPI.cache.set(url, result);
+        this.cache.set(url, result);
         return result;
       })
       .catch((err) => {

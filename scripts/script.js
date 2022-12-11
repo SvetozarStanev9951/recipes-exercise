@@ -13,12 +13,16 @@ import {
 } from "./storageControl.js";
 
 const mealsApi = new MealsAPI();
+const searchApi = new MealsAPI("https://www.themealdb.com/api/json/v1/1", {
+  search: "/search.php",
+});
 
 const categoriesFilterDiv = document.getElementById(
   "detailed-categories-filter"
 );
 const resultsContainer = document.getElementById("results-contaienr");
 const appLogo = document.getElementById("my-app-logo");
+const searchInput = document.getElementById("search-recipe-input");
 
 function buildMealView(meal) {
   const {
@@ -136,6 +140,19 @@ function createCategoryElement(categoryObj) {
   return categoryDiv;
 }
 
+async function searchRecipe(e) {
+  resultsContainer.innerHTML = "";
+
+  const { meals } = await searchApi.get(
+    searchApi.endpoints.search,
+    "s=" + e.target.value
+  );
+
+  meals.forEach((meal) => {
+    createMealPreviewElement(meal);
+  });
+}
+
 async function main() {
   categoriesFilterDiv.innerHTML = "";
   resultsContainer.innerHTML = "";
@@ -188,21 +205,17 @@ async function main() {
   }
 
   buildMealView(recipeOfTheDay);
-  // Handle recipe of the day
-  // 0. Check if recipe of the day exists in storage
-  // [DONE] 1. Fetch random meal
-  // 2. Save random meal in storage with key current day
-  // [DONE] 3. Build recipe view with the random meal
 }
 
 main();
 
 appLogo.addEventListener("click", main);
+searchInput.addEventListener("input", searchRecipe);
 // [DONE] 1. Add title for each recipe
 // [DONE] 2. Build recipes view and fetch data for each recipe
 // 3. Handle search
 // [DONE] 4. Reset initial view when logo is clicked
-// 5. Recipe of the day
+// [DONE] 5. Recipe of the day
 // 6. Filter by country
 // [DONE] 7. Cache data (local storage)
 // [DONE] 8. Scroll to result container
